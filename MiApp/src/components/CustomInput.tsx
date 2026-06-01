@@ -8,7 +8,7 @@ type InputProps = TextInputProps & {
     label?: string;
     placeholder: string;
     value: string;
-    onChange: (text: string) => void;
+    onChangeText: (text: string) => void;
 };
 
 export default function CustomInput({
@@ -16,7 +16,7 @@ export default function CustomInput({
     label,
     placeholder,
     value,
-    onChange,
+    onChangeText,
     style,
     ...rest
 }: InputProps) {
@@ -57,7 +57,7 @@ export default function CustomInput({
                     placeholder={placeholder}
                     placeholderTextColor="#94A3B8"
                     value={value}
-                    onChangeText={onChange}
+                    onChangeText={onChangeText}
                     style={[styles.input, style]}
                     secureTextEntry={isSecureText}
                     keyboardType={keyboardType}
