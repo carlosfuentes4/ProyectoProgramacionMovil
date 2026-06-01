@@ -1,4 +1,5 @@
 import { Text, TouchableOpacity, StyleSheet } from "react-native"; 
+import React from 'react';
 
 type ButtonProps = {
   title: string;
