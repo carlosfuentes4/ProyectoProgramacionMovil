@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButtom';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/StackNavigator';
 
+type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
-export default function LoginScreen() {
+export default function LoginScreen({navigation}: Props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = () => {
-        console.log('Iniciando sesión con:', email, password);
+        if (!email.includes('@') || password.trim()===''){
+            Alert.alert('alert', 'Los campos deben ser correctos');
+            return;
+        }
+        navigation.navigate('Home');
     };
 
     return (

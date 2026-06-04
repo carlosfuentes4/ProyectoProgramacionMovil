@@ -1,21 +1,13 @@
-import React from 'react';
-import { StyleSheet, View, StatusBar } from 'react-native';
-import LoginScreen from './src/screens/LoginScreen'; 
+import React from "react";
+import { StyleSheet, View, StatusBar } from "react-native";
+import LoginScreen from "./src/screens/LoginScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import StackNavigator from "./src/navigation/StackNavigator";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <LoginScreen />
-    </View>
+    <NavigationContainer>
+      <StackNavigator />
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    // Este padding evita que tu Login se pegue al borde de la cámara de tu celular
-    paddingTop: StatusBar.currentHeight || 40, 
-  },
-});
