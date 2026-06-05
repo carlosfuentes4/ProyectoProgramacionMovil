@@ -16,7 +16,7 @@ export default function LoginScreen({navigation}: Props) {
             Alert.alert('alert', 'Los campos deben ser correctos');
             return;
         }
-        navigation.navigate('Home');
+        navigation.replace('Home');
     };
 
     return (

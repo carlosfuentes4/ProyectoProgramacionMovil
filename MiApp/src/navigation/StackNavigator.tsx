@@ -16,12 +16,12 @@ export default function StackNavigator() {
       <Stack.Screen 
         name="Home" 
         component={HomeScreen} 
-        options={{ title: 'Inicio' }} 
+        options={{headerShown: false}} 
       />
       <Stack.Screen 
         name="Login" 
         component={LoginScreen} 
-        options={{ title: 'Detalles' }} 
+        options={{headerShown: false}} 
       />
     </Stack.Navigator>
   );
