@@ -3,13 +3,20 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/StackNavigator";
 import RecipeCard from "../components/RecipeCards";
+import { useAuth } from "../context/AuthContext";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function HomeScreen({ navigation }: Props) {
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>¡Bienvenido a la App!</Text>
+      <Text style={styles.text}>¡Bienvenido, {user?.email}!</Text>
 
       <RecipeCard
         title={"Receta 1"}
@@ -25,8 +32,8 @@ export default function HomeScreen({ navigation }: Props) {
       />
 
       <Button
-        title="Ir al Login"
-        onPress={() => navigation.navigate("Login")} // Apunta a Login
+        title="Cerrar Sesión"
+        onPress={handleLogout}
       />
     </View>
   );

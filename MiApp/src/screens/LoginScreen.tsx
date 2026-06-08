@@ -4,19 +4,21 @@ import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButtom';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/StackNavigator';
+import { useAuth } from '../context/AuthContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function LoginScreen({navigation}: Props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { login } = useAuth();
 
     const handleLogin = () => {
         if (!email.includes('@') || password.trim()===''){
             Alert.alert('alert', 'Los campos deben ser correctos');
             return;
         }
-        navigation.navigate('Home');
+        login(email);
     };
 
     return (
