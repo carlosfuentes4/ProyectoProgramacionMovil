@@ -1,23 +1,34 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
 
 interface RecipeCardProps {
   title: string;
-  description: string;
+  category: string;
+  time: string;
+  difficulty: string;
   imageUrl: string;
   onPress: () => void;
-  style?: ViewStyle;
 }
 
-export default function RecipeCard({ title, description, imageUrl, onPress, style }: RecipeCardProps) {
+export default function RecipeCard({ title, category, time, difficulty, imageUrl, onPress }: RecipeCardProps) {
   return (
-    <TouchableOpacity style={[styles.card, style]} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
       <Image source={{ uri: imageUrl }} style={styles.image} />
       <View style={styles.content}>
+        <Text style={styles.category}>{category.toUpperCase()}</Text>
         <Text style={styles.title} numberOfLines={1}>{title}</Text>
-        <Text style={styles.description} numberOfLines={2}>
-          {description}
-        </Text>
+        
+        <View style={styles.footer}>
+          <View style={styles.info}>
+            <Ionicons name="time-outline" size={14} color="#64748B" />
+            <Text style={styles.infoText}>{time}</Text>
+          </View>
+          <View style={styles.info}>
+            <Ionicons name="stats-chart-outline" size={14} color="#64748B" />
+            <Text style={styles.infoText}>{difficulty}</Text>
+          </View>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -26,32 +37,46 @@ export default function RecipeCard({ title, description, imageUrl, onPress, styl
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 16,
-    elevation: 3,
+    borderRadius: 16,
+    marginBottom: 20,
+    elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 8,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
-    height: 180,
-    resizeMode: 'cover',
+    height: 150, 
   },
   content: {
-    padding: 12,
+    padding: 15,
+  },
+  category: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#6366F1',
+    letterSpacing: 1,
+    marginBottom: 4,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1E293B',
-    marginBottom: 4,
+    marginBottom: 8,
   },
-  description: {
-    fontSize: 14,
+  footer: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  info: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  infoText: {
+    fontSize: 12,
     color: '#64748B',
-    lineHeight: 20,
   },
 });

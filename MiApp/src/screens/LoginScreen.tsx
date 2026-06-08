@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View, Image, StatusBar } from 'react-native';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButtom';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -7,28 +7,42 @@ import { RootStackParamList } from '../navigation/StackNavigator';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
-export default function LoginScreen({navigation}: Props) {
+export default function LoginScreen({ navigation }: Props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = () => {
-        if (!email.includes('@') || password.trim()===''){
-            Alert.alert('alert', 'Los campos deben ser correctos');
+        if (!email.trim() || !password) {
+            Alert.alert('Campos Obligatorios', 'Por favor, completa todos los campos.');
             return;
         }
-        navigation.replace('Home');
+        if (!email.includes('@')) {
+            Alert.alert('Correo Inválido', 'El correo electrónico debe contener un carácter "@".');
+            return;
+        }
+        if (password.length < 6) {
+            Alert.alert('Contraseña Corta', 'La contraseña debe tener al menos 6 caracteres.');
+            return;
+        }
+        navigation.replace('Main');
     };
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerContainer}>
+            <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+            
+            <View style={styles.headerContainer}>              
+                <Image 
+                    source={require('../../assets/logo.png')} 
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                />
                 <Text style={styles.logo}>My Cooking Book</Text>
                 <Text style={styles.subtitle}>Organiza y comparte tus recetas favoritas</Text>
             </View>
 
             <View style={styles.formContainer}>
                 <CustomInput
-                    type="email"
                     label="Correo Electrónico"
                     placeholder="ejemplo@correo.com"
                     value={email}
@@ -36,9 +50,9 @@ export default function LoginScreen({navigation}: Props) {
                 />
 
                 <CustomInput
-                    type="password"
                     label="Contraseña"
                     placeholder="Ingresa tu contraseña"
+                    secureTextEntry={true}
                     value={password}
                     onChangeText={setPassword}
                 />
@@ -64,7 +78,12 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         alignItems: 'center',
-        marginBottom: 40,
+        marginBottom: 32,
+    },
+    logoImage: {
+        width: 100,
+        height: 100,
+        marginBottom: 16,
     },
     logo: {
         fontSize: 32,
