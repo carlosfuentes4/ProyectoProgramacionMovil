@@ -28,7 +28,7 @@ export default function LoginScreen({ navigation }: Props) {
         }
         
         login(email);
-        navigation.replace('Main');
+        navigation.replace('Home');
     };
 
     return (
