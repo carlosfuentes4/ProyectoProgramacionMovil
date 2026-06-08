@@ -1,10 +1,12 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
+import { useAuth } from '../context/AuthContext';
+import HomeScreen from '../screens/HomeScreen';
 
 export type RootStackParamList = {
   Login: undefined;
-  Main: undefined; // Cambiamos 'Home' por 'Main'
+  Home: undefined; // Cambiamos 'Home' por 'Main'
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
