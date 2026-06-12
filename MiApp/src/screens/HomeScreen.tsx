@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, SafeAreaView, FlatList, StatusBar, TouchableOpa
 import { Ionicons } from "@expo/vector-icons";
 import RecipeCard from "../components/RecipeCards";
 import { supabase } from "../services/supabase";
+import { useAuth } from "../context/AuthContext";
 
 type Props = {
   navigation: any;
@@ -13,6 +14,8 @@ export default function HomeScreen({ navigation }: Props) {
   // 2. Estados para controlar las recetas de la BD y la animación de carga
   const [recetas, setRecetas] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const {user}=useAuth();
+  const {login}=useAuth();
 
   // traer las recetas desde Supabase
   const obtenerRecetas = async () => {
@@ -53,7 +56,7 @@ export default function HomeScreen({ navigation }: Props) {
       <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
 
       <View style={styles.headerContainer}>
-        <Text style={styles.welcomeText}>¡Hola de nuevo!</Text>
+        <Text style={styles.welcomeText}>¡Hola {user?.email}!</Text>
         <Text style={styles.subtitleText}>Mis Recetas Guardadas</Text>
       </View>
 

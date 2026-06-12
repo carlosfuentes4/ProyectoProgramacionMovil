@@ -4,12 +4,14 @@ import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButtom';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/StackNavigator';
+import { useAuth } from '../context/AuthContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: Props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { login } = useAuth();
 
     const handleLogin = () => {
         if (!email.trim() || !password) {
@@ -24,6 +26,8 @@ export default function LoginScreen({ navigation }: Props) {
             Alert.alert('Contraseña Corta', 'La contraseña debe tener al menos 6 caracteres.');
             return;
         }
+        
+        login(email);
         navigation.replace('Main');
     };
 
