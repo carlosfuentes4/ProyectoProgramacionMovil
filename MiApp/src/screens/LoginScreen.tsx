@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View, Image, StatusBar } from 'react-native';
-import CustomInput from '../components/CustomInput';
-import CustomButton from '../components/CustomButtom';
+import { Alert, StyleSheet, Text, View, Image, StatusBar, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/StackNavigator';
 import { useAuth } from '../context/AuthContext';
+import CustomInput from '../components/CustomInput';
+import CustomButton from '../components/CustomButton';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -12,23 +12,31 @@ export default function LoginScreen({ navigation }: Props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useAuth();
+    const [esRegistro, setEsRegistro] = useState(false); // Estado para alternar modo
 
-    const handleLogin = () => {
+    const handleAuth = () => {
         if (!email.trim() || !password) {
             Alert.alert('Campos Obligatorios', 'Por favor, completa todos los campos.');
             return;
         }
         if (!email.includes('@')) {
-            Alert.alert('Correo Inválido', 'El correo electrónico debe contener un carácter "@".');
+            Alert.alert('Correo Inválido', 'El correo debe contener un "@".');
             return;
         }
         if (password.length < 6) {
-            Alert.alert('Contraseña Corta', 'La contraseña debe tener al menos 6 caracteres.');
+            Alert.alert('Contraseña Corta', 'Mínimo 6 caracteres.');
             return;
         }
         
-        login(email);
-        navigation.replace('Main');
+        
+
+        if (esRegistro) {
+            Alert.alert('Registro', 'Registro exitoso para ' + email);
+            setEsRegistro(false); // Volver a login tras registrar
+        } else {
+            login(email);
+            navigation.replace('Main');
+        }
     };
 
     return (
@@ -63,10 +71,18 @@ export default function LoginScreen({ navigation }: Props) {
 
                 <View style={styles.buttonContainer}>
                     <CustomButton
-                        title="Iniciar Sesión"
-                        onPress={handleLogin}
+                        title={esRegistro ? "Registrarse" : "Iniciar Sesión"}
+                        onPress={handleAuth}
                         variant="primary"
                     />
+
+                    <TouchableOpacity onPress={() => setEsRegistro(!esRegistro)} style={{ marginTop: 20 }}>
+                        <Text style={styles.toggleText}>
+                            {esRegistro 
+                                ? "¿Ya tienes cuenta? Inicia sesión" 
+                                : "¿No tienes cuenta? Regístrate aquí"}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
@@ -106,5 +122,10 @@ const styles = StyleSheet.create({
     buttonContainer: {
         alignItems: 'center',
         marginTop: 20,
+    },
+    toggleText: {
+        color: '#64748B',
+        fontSize: 14,
+        fontWeight: '600',
     }
 });

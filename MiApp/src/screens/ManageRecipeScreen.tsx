@@ -1,8 +1,21 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { supabase } from "../services/supabase";
+import CustomButton from "../components/CustomButton";
 
 type Props = {
   navigation: any;
@@ -15,23 +28,33 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
   const esEdicion = !!recetaEditar;
 
   const [titulo, setTitulo] = useState(recetaEditar?.titulo || "");
-  const [categoria, setCategoria] = useState(recetaEditar?.categoria || "Almuerzo");
+  const [categoria, setCategoria] = useState(
+    recetaEditar?.categoria || "Almuerzo",
+  );
   const [tiempo, setTiempo] = useState(recetaEditar?.tiempo || "30 min");
-  const [dificultad, setDificultad] = useState(recetaEditar?.dificultad || "Fácil");
-  const [ingredientes, setIngredientes] = useState(recetaEditar?.ingredientes || "");
-  const [instrucciones, setInstrucciones] = useState(recetaEditar?.instrucciones || "");
-  const [imagenUrl, setImagenUrl] = useState<string | null>(recetaEditar?.imagen_url || null);
+  const [dificultad, setDificultad] = useState(
+    recetaEditar?.dificultad || "Fácil",
+  );
+  const [ingredientes, setIngredientes] = useState(
+    recetaEditar?.ingredientes || "",
+  );
+  const [instrucciones, setInstrucciones] = useState(
+    recetaEditar?.instrucciones || "",
+  );
+  const [imagenUrl, setImagenUrl] = useState<string | null>(
+    recetaEditar?.imagen_url || null,
+  );
   const [guardando, setGuardando] = useState(false);
 
   const seleccionarImagen = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permiso requerido', 'Necesitamos acceso a tus fotos.');
+    if (status !== "granted") {
+      Alert.alert("Permiso requerido", "Necesitamos acceso a tus fotos.");
       return;
     }
 
     const resultado = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.7,
@@ -44,7 +67,10 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
 
   const guardarReceta = async () => {
     if (!titulo || !ingredientes || !instrucciones) {
-      Alert.alert("Campos incompletos", "Por favor llena el título, ingredientes e instrucciones.");
+      Alert.alert(
+        "Campos incompletos",
+        "Por favor llena el título, ingredientes e instrucciones.",
+      );
       return;
     }
 
@@ -96,9 +122,7 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
         if (error) throw error;
         Alert.alert("¡Éxito!", "Receta actualizada correctamente.");
       } else {
-        const { error } = await supabase
-          .from("recetas")
-          .insert([datosReceta]);
+        const { error } = await supabase.from("recetas").insert([datosReceta]);
 
         if (error) throw error;
         Alert.alert("¡Éxito!", "Receta guardada correctamente.");
@@ -113,16 +137,24 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === "ios" ? "padding" : "height"} 
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* AJUSTE 3: Cambia el título de la cabecera dinámicamente */}
-        <Text style={styles.headerTitle}>{esEdicion ? "Editar Receta" : "Nueva Receta"}</Text>
+        <Text style={styles.headerTitle}>
+          {esEdicion ? "Editar Receta" : "Nueva Receta"}
+        </Text>
 
         {/* Zona de Imagen */}
-        <TouchableOpacity style={styles.imagePicker} onPress={seleccionarImagen}>
+        <TouchableOpacity
+          style={styles.imagePicker}
+          onPress={seleccionarImagen}
+        >
           {imagenUrl ? (
             <Image source={{ uri: imagenUrl }} style={styles.previewImage} />
           ) : (
@@ -135,18 +167,33 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
 
         {/*Título*/}
         <Text style={styles.label}>Nombre del Platillo</Text>
-        <TextInput style={styles.input} placeholder="Ej. Tacos al Pastor" value={titulo} onChangeText={setTitulo} />
+        <TextInput
+          style={styles.input}
+          placeholder="Ej. Tacos al Pastor"
+          value={titulo}
+          onChangeText={setTitulo}
+        />
 
         {/*Categoría*/}
         <Text style={styles.label}>Categoría</Text>
         <View style={styles.rowButtons}>
           {["Desayuno", "Almuerzo", "Postre"].map((cat) => (
-            <TouchableOpacity 
-              key={cat} 
-              style={[styles.selectorButton, categoria === cat && styles.activeButton]} 
+            <TouchableOpacity
+              key={cat}
+              style={[
+                styles.selectorButton,
+                categoria === cat && styles.activeButton,
+              ]}
               onPress={() => setCategoria(cat)}
             >
-              <Text style={[styles.selectorText, categoria === cat && styles.activeText]}>{cat}</Text>
+              <Text
+                style={[
+                  styles.selectorText,
+                  categoria === cat && styles.activeText,
+                ]}
+              >
+                {cat}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -155,12 +202,19 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
         <Text style={styles.label}>Tiempo de Preparación</Text>
         <View style={styles.rowButtons}>
           {["15 min", "30 min", "45 min", "1 hr+"].map((t) => (
-            <TouchableOpacity 
-              key={t} 
-              style={[styles.selectorButton, tiempo === t && styles.activeButton]} 
+            <TouchableOpacity
+              key={t}
+              style={[
+                styles.selectorButton,
+                tiempo === t && styles.activeButton,
+              ]}
               onPress={() => setTiempo(t)}
             >
-              <Text style={[styles.selectorText, tiempo === t && styles.activeText]}>{t}</Text>
+              <Text
+                style={[styles.selectorText, tiempo === t && styles.activeText]}
+              >
+                {t}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -169,43 +223,55 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
         <Text style={styles.label}>Dificultad</Text>
         <View style={styles.rowButtons}>
           {["Fácil", "Media", "Difícil"].map((dif) => (
-            <TouchableOpacity 
-              key={dif} 
-              style={[styles.selectorButton, dificultad === dif && styles.activeButton]} 
+            <TouchableOpacity
+              key={dif}
+              style={[
+                styles.selectorButton,
+                dificultad === dif && styles.activeButton,
+              ]}
               onPress={() => setDificultad(dif)}
             >
-              <Text style={[styles.selectorText, dificultad === dif && styles.activeText]}>{dif}</Text>
+              <Text
+                style={[
+                  styles.selectorText,
+                  dificultad === dif && styles.activeText,
+                ]}
+              >
+                {dif}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
 
         {/*Ingredientes*/}
         <Text style={styles.label}>Ingredientes</Text>
-        <TextInput 
-          style={[styles.input, styles.textArea]} 
-          placeholder="Escribe cada ingrediente separado por comas..." 
-          multiline 
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          placeholder="Escribe cada ingrediente separado por comas..."
+          multiline
           numberOfLines={4}
-          value={ingredientes} 
-          onChangeText={setIngredientes} 
+          value={ingredientes}
+          onChangeText={setIngredientes}
         />
 
         {/*Instrucciones*/}
         <Text style={styles.label}>Preparación / Pasos</Text>
-        <TextInput 
-          style={[styles.input, styles.textArea]} 
-          placeholder="1. Picar verduras...&#10;2. Cocinar a fuego lento..." 
-          multiline 
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          placeholder="1. Picar verduras...&#10;2. Cocinar a fuego lento..."
+          multiline
           numberOfLines={5}
-          value={instrucciones} 
-          onChangeText={setInstrucciones} 
+          value={instrucciones}
+          onChangeText={setInstrucciones}
         />
 
         {/*Boton de Guardar*/}
-        <TouchableOpacity style={styles.saveButton} onPress={guardarReceta} disabled={guardando}>
-          {/* AJUSTE 4: Cambia el texto del botón según la acción */}
-          {guardando ? <ActivityIndicator color="#FFF" /> : <Text style={styles.saveButtonText}>{esEdicion ? "Actualizar Cambios" : "Guardar Receta"}</Text>}
-        </TouchableOpacity>
+        <CustomButton
+          title={esEdicion ? "Actualizar Cambios" : "Guardar Receta"}
+          onPress={guardarReceta}
+          variant="primary"
+          style={{ marginTop: 25 }}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );
