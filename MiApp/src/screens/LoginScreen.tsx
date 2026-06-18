@@ -1,131 +1,143 @@
-import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View, Image, StatusBar, TouchableOpacity } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/StackNavigator';
-import { useAuth } from '../context/AuthContext';
-import CustomInput from '../components/CustomInput';
-import CustomButton from '../components/CustomButton';
+import React, { useState } from "react";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  TouchableOpacity,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useAuth } from "../context/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
+import CustomInput from "../components/CustomInput";
+import CustomButton from "../components/CustomButton";
+import { RootStackParamList } from "../navigation/types";
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
+type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function LoginScreen({ navigation }: Props) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const { login } = useAuth();
-    const [esRegistro, setEsRegistro] = useState(false); // Estado para alternar modo
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [esRegistro, setEsRegistro] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-    const handleAuth = () => {
-        if (!email.trim() || !password) {
-            Alert.alert('Campos Obligatorios', 'Por favor, completa todos los campos.');
-            return;
-        }
-        if (!email.includes('@')) {
-            Alert.alert('Correo Inválido', 'El correo debe contener un "@".');
-            return;
-        }
-        if (password.length < 6) {
-            Alert.alert('Contraseña Corta', 'Mínimo 6 caracteres.');
-            return;
-        }
-        
-        
+  const { signInWithEmail, signUpWithEmail } = useAuth();
 
-        if (esRegistro) {
-            Alert.alert('Registro', 'Registro exitoso para ' + email);
-            setEsRegistro(false); // Volver a login tras registrar
-        } else {
-            login(email);
-            navigation.replace('Main');
-        }
-    };
+  const handleAuth = async () => {
+    try {
+      if (esRegistro) {
+        await signUpWithEmail(email, password);
+        Alert.alert("Éxito", "Cuenta creada.");
+        setEsRegistro(false);
+      } else {
+        await signInWithEmail(email, password);
+      }
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+    }
+  };
 
-    return (
-        <View style={styles.container}>
-            <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-            
-            <View style={styles.headerContainer}>              
-                <Image 
-                    source={require('../../assets/logo.png')} 
-                    style={styles.logoImage}
-                    resizeMode="contain"
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
+          <View style={styles.headerContainer}>
+            <Image
+              source={require("../../assets/logo.png")}
+              style={styles.logoImage}
+            />
+            <Text style={styles.title}>My Cooking Book</Text>
+            <Text style={styles.subtitle}>
+              Organiza y comparte tus recetas favoritas
+            </Text>
+          </View>
+
+          <View style={styles.formContainer}>
+            <CustomInput
+              label="Correo Electrónico"
+              placeholder="ejemplo@correo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+
+            <View>
+              <CustomInput
+                label="Contraseña"
+                placeholder="Ingresa tu contraseña"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={22}
+                  color="#64748B"
                 />
-                <Text style={styles.logo}>My Cooking Book</Text>
-                <Text style={styles.subtitle}>Organiza y comparte tus recetas favoritas</Text>
+              </TouchableOpacity>
             </View>
 
-            <View style={styles.formContainer}>
-                <CustomInput
-                    label="Correo Electrónico"
-                    placeholder="ejemplo@correo.com"
-                    value={email}
-                    onChangeText={setEmail}
-                />
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                title={esRegistro ? "Registrarse" : "Iniciar Sesión"}
+                onPress={handleAuth}
+                variant="primary"
+              />
 
-                <CustomInput
-                    label="Contraseña"
-                    placeholder="Ingresa tu contraseña"
-                    secureTextEntry={true}
-                    value={password}
-                    onChangeText={setPassword}
-                />
-
-                <View style={styles.buttonContainer}>
-                    <CustomButton
-                        title={esRegistro ? "Registrarse" : "Iniciar Sesión"}
-                        onPress={handleAuth}
-                        variant="primary"
-                    />
-
-                    <TouchableOpacity onPress={() => setEsRegistro(!esRegistro)} style={{ marginTop: 20 }}>
-                        <Text style={styles.toggleText}>
-                            {esRegistro 
-                                ? "¿Ya tienes cuenta? Inicia sesión" 
-                                : "¿No tienes cuenta? Regístrate aquí"}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+              <TouchableOpacity
+                onPress={() => setEsRegistro(!esRegistro)}
+                style={{ marginTop: 20 }}
+              >
+                <Text style={styles.toggleText}>
+                  {esRegistro
+                    ? "¿Ya tienes cuenta? Inicia sesión"
+                    : "¿No tienes cuenta? Regístrate aquí"}
+                </Text>
+              </TouchableOpacity>
             </View>
-        </View>
-    );
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-        justifyContent: 'center',
-        paddingHorizontal: 24,
-    },
-    headerContainer: {
-        alignItems: 'center',
-        marginBottom: 32,
-    },
-    logoImage: {
-        width: 100,
-        height: 100,
-        marginBottom: 16,
-    },
-    logo: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#1E293B',
-        marginBottom: 8,
-    },
-    subtitle: {
-        fontSize: 16,
-        color: '#64748B',
-        textAlign: 'center',
-    },
-    formContainer: {
-        width: '100%',
-    },
-    buttonContainer: {
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    toggleText: {
-        color: '#64748B',
-        fontSize: 14,
-        fontWeight: '600',
-    }
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    backgroundColor: "#FFFFFF",
+  },
+  headerContainer: { alignItems: "center", marginBottom: 32 },
+  logoImage: { width: 120, height: 120, marginBottom: 16 },
+  title: { fontSize: 32, fontWeight: "bold", color: "#1E293B" },
+  subtitle: { fontSize: 16, color: "#64748B", textAlign: "center" },
+  formContainer: { width: "100%" },
+  eyeIcon: { position: "absolute", right: 15, top: 35 }, 
+  buttonContainer: { width: "100%", marginTop: 20 },
+  toggleText: {
+    color: "#64748B",
+    fontSize: 14,
+    fontWeight: "600",
+    textAlign: "center",
+  },
 });

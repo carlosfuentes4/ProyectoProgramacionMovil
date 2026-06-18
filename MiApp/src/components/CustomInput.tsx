@@ -1,15 +1,8 @@
 import React from 'react';
 import { TextInput, Text, View, StyleSheet } from 'react-native';
 
-type InputProps = {
-  label: string;
-  placeholder: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  secureTextEntry?: boolean;
-};
 
-export default function CustomInput({ label, placeholder, value, onChangeText, secureTextEntry }: InputProps) {
+export default function CustomInput({ label, placeholder, value, onChangeText, secureTextEntry, ...props }: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
@@ -19,6 +12,7 @@ export default function CustomInput({ label, placeholder, value, onChangeText, s
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
+        {...props}
       />
     </View>
   );

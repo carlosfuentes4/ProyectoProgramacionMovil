@@ -23,7 +23,6 @@ type Props = {
 };
 
 export default function ManageRecipeScreen({ navigation, route }: Props) {
-  // AJUSTE 1: Detectamos si venimos desde el botón de "Editar" de la pantalla de detalles
   const recetaEditar = route.params?.receta;
   const esEdicion = !!recetaEditar;
 
@@ -69,16 +68,29 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
     if (!titulo || !ingredientes || !instrucciones) {
       Alert.alert(
         "Campos incompletos",
-        "Por favor llena el título, ingredientes e instrucciones.",
+        "Por favor llena los campos obligatorios.",
       );
       return;
     }
 
     try {
       setGuardando(true);
+
+      // Obtención del usuario
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      // Si no hay sesión activa, abortamos antes de intentar cualquier cosa
+      if (!user || !user.id) {
+        throw new Error(
+          "No se pudo identificar al usuario. Por favor, inicia sesión de nuevo.",
+        );
+      }
+
       let finalImageUrl = imagenUrl || "https://via.placeholder.com/150";
 
-      // Solo sube una nueva imagen si el usuario la seleccionó desde la galería en esta sesión (comienza con file://)
+      // Subida de imagen
       if (imagenUrl && imagenUrl.startsWith("file://")) {
         const fileName = `${Date.now()}_receta.jpg`;
         const formData = new FormData();
@@ -94,15 +106,11 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
 
         if (uploadError) throw uploadError;
 
-        if (uploadData) {
-          const { data: publicUrlData } = supabase.storage
-            .from("recetas-imagenes")
-            .getPublicUrl(fileName);
-          finalImageUrl = publicUrlData.publicUrl;
-        }
+        const { data: publicUrlData } = supabase.storage
+          .from("recetas-imagenes")
+          .getPublicUrl(fileName);
+        finalImageUrl = publicUrlData.publicUrl;
       }
-
-      // Estructuramos el objeto que va para Supabase
       const datosReceta = {
         titulo,
         categoria,
@@ -111,6 +119,7 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
         ingredientes,
         instrucciones,
         imagen_url: finalImageUrl,
+        user_id: user.id,
       };
 
       if (esEdicion) {
@@ -118,19 +127,20 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
           .from("recetas")
           .update(datosReceta)
           .eq("id", recetaEditar.id);
-
         if (error) throw error;
-        Alert.alert("¡Éxito!", "Receta actualizada correctamente.");
+        Alert.alert("¡Éxito!", "Receta actualizada.");
       } else {
+        console.log("DEBUG: Usuario logueado:", user.id);
+        console.log("DEBUG: Objeto a insertar:", datosReceta);
         const { error } = await supabase.from("recetas").insert([datosReceta]);
-
         if (error) throw error;
-        Alert.alert("¡Éxito!", "Receta guardada correctamente.");
+        Alert.alert("¡Éxito!", "Receta guardada.");
       }
 
       navigation.popToTop();
     } catch (error: any) {
-      Alert.alert("Error al guardar", error.message);
+      console.error("Error detallado:", error);
+      Alert.alert("Error", error.message || "Ocurrió un problema desconocido.");
     } finally {
       setGuardando(false);
     }
@@ -145,7 +155,6 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
-        {/* AJUSTE 3: Cambia el título de la cabecera dinámicamente */}
         <Text style={styles.headerTitle}>
           {esEdicion ? "Editar Receta" : "Nueva Receta"}
         </Text>
