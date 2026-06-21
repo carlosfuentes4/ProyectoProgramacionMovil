@@ -14,11 +14,15 @@ import { Ionicons } from "@expo/vector-icons";
 import RecipeCard from "../components/RecipeCards";
 import { supabase } from "../services/supabase";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function HomeScreen({ navigation }: any) {
   const [recetas, setRecetas] = useState<any[]>([]);
   const [cargando, setCargando] = useState(true);
   const { user } = useAuth();
+  const { colors } = useTheme();
+
+  const styles = getStyles(colors);
 
   const obtenerRecetas = async () => {
     setCargando(true);
@@ -55,15 +59,15 @@ export default function HomeScreen({ navigation }: any) {
 
   if (cargando) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#E11D48" />
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
+      <StatusBar barStyle={colors.statusBar} backgroundColor={colors.background} />
       <View style={styles.headerContainer}>
         <Text style={styles.subtitleText}>Mis Recetas</Text>
       </View>
@@ -74,7 +78,7 @@ export default function HomeScreen({ navigation }: any) {
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="restaurant-outline" size={48} color="#94A3B8" />
+            <Ionicons name="restaurant-outline" size={48} color={colors.textMuted} />
             <Text style={styles.emptyText}>Aún no tienes recetas.</Text>
           </View>
         }
@@ -100,31 +104,36 @@ export default function HomeScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: any) => StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.background,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerContainer: { 
     paddingHorizontal: 24, 
     marginTop: 20,
     marginBottom: 15 
   },
-  subtitleText: { fontSize: 24, fontWeight: "bold", color: "#0F172A" },
+  subtitleText: { fontSize: 24, fontWeight: "bold", color: colors.text },
   listContainer: { paddingHorizontal: 24, paddingBottom: 90 },
   emptyContainer: { alignItems: "center", marginTop: 40 },
   emptyText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#475569",
+    color: colors.textSecondary,
     marginTop: 12,
   },
   floatingButton: {
     position: "absolute",
     bottom: 24,
     right: 24,
-    backgroundColor: "#E11D48",
+    backgroundColor: colors.primary,
     width: 60,
     height: 60,
     borderRadius: 30,
@@ -132,4 +141,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 5,
   },
-});
+});

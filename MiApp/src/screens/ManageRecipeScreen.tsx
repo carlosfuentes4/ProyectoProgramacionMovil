@@ -11,11 +11,13 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { supabase } from "../services/supabase";
 import CustomButton from "../components/CustomButton";
+import { useTheme } from "../context/ThemeContext";
 
 type Props = {
   navigation: any;
@@ -44,6 +46,9 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
     recetaEditar?.imagen_url || null,
   );
   const [guardando, setGuardando] = useState(false);
+
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
 
   const seleccionarImagen = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -151,6 +156,8 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
+      <StatusBar barStyle={colors.statusBar} backgroundColor={colors.background} />
+      
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
@@ -168,7 +175,7 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
             <Image source={{ uri: imagenUrl }} style={styles.previewImage} />
           ) : (
             <View style={styles.uploadPlaceholder}>
-              <Ionicons name="camera-outline" size={40} color="#94A3B8" />
+              <Ionicons name="camera-outline" size={40} color={colors.textMuted} />
               <Text style={styles.uploadText}>Añadir Foto del Platillo</Text>
             </View>
           )}
@@ -179,6 +186,7 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
         <TextInput
           style={styles.input}
           placeholder="Ej. Tacos al Pastor"
+          placeholderTextColor={colors.placeholder}
           value={titulo}
           onChangeText={setTitulo}
         />
@@ -257,6 +265,7 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
         <TextInput
           style={[styles.input, styles.textArea]}
           placeholder="Escribe cada ingrediente separado por comas..."
+          placeholderTextColor={colors.placeholder}
           multiline
           numberOfLines={4}
           value={ingredientes}
@@ -268,6 +277,7 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
         <TextInput
           style={[styles.input, styles.textArea]}
           placeholder="1. Picar verduras...&#10;2. Cocinar a fuego lento..."
+          placeholderTextColor={colors.placeholder}
           multiline
           numberOfLines={5}
           value={instrucciones}
@@ -286,16 +296,16 @@ export default function ManageRecipeScreen({ navigation, route }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: any) => StyleSheet.create({
   scrollContainer: {
     padding: 24,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.background,
     paddingBottom: 40,
   },
   headerTitle: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#0F172A",
+    color: colors.text,
     marginBottom: 20,
     marginTop: Platform.OS === "ios" ? 20 : 0,
   },
@@ -303,7 +313,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 180,
     borderRadius: 16,
-    backgroundColor: "#EDF2F7",
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
     overflow: "hidden",
     marginBottom: 20,
   },
@@ -318,24 +330,24 @@ const styles = StyleSheet.create({
   },
   uploadText: {
     marginTop: 8,
-    color: "#64748B",
+    color: colors.textSecondary,
     fontSize: 14,
   },
   label: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#475569",
+    color: colors.textSecondary,
     marginBottom: 8,
     marginTop: 12,
   },
   input: {
-    backgroundColor: "#FFF",
+    backgroundColor: colors.inputBg,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: colors.border,
     borderRadius: 12,
     padding: 14,
     fontSize: 16,
-    color: "#1E293B",
+    color: colors.text,
   },
   textArea: {
     height: 100,
@@ -351,30 +363,21 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 20,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: colors.selectorBg,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   activeButton: {
-    backgroundColor: "#E11D48",
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   selectorText: {
-    color: "#475569",
+    color: colors.selectorText,
     fontSize: 14,
     fontWeight: "600",
   },
   activeText: {
     color: "#FFF",
   },
-  saveButton: {
-    backgroundColor: "#10B981",
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 25,
-    elevation: 2,
-  },
-  saveButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
 });
+

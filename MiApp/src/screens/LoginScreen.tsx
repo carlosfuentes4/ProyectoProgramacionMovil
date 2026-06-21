@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
@@ -29,6 +30,9 @@ export default function LoginScreen({ navigation }: Props) {
   const [showPassword, setShowPassword] = useState(false);
 
   const { signInWithEmail, signUpWithEmail } = useAuth();
+  const { colors } = useTheme();
+
+  const styles = getStyles(colors);
 
   const handleAuth = async () => {
     try {
@@ -51,7 +55,7 @@ export default function LoginScreen({ navigation }: Props) {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+          <StatusBar barStyle={colors.statusBar} backgroundColor={colors.background} />
 
           <View style={styles.headerContainer}>
             <Image
@@ -90,7 +94,7 @@ export default function LoginScreen({ navigation }: Props) {
                 <Ionicons
                   name={showPassword ? "eye-off-outline" : "eye-outline"}
                   size={22}
-                  color="#64748B"
+                  color={colors.textSecondary}
                 />
               </TouchableOpacity>
             </View>
@@ -120,24 +124,25 @@ export default function LoginScreen({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: any) => StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
     paddingHorizontal: 24,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.background,
   },
   headerContainer: { alignItems: "center", marginBottom: 32 },
   logoImage: { width: 120, height: 120, marginBottom: 16 },
-  title: { fontSize: 32, fontWeight: "bold", color: "#1E293B" },
-  subtitle: { fontSize: 16, color: "#64748B", textAlign: "center" },
+  title: { fontSize: 32, fontWeight: "bold", color: colors.text },
+  subtitle: { fontSize: 16, color: colors.textSecondary, textAlign: "center" },
   formContainer: { width: "100%" },
   eyeIcon: { position: "absolute", right: 15, top: 35 }, 
   buttonContainer: { width: "100%", marginTop: 20 },
   toggleText: {
-    color: "#64748B",
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: "600",
     textAlign: "center",
   },
 });
+

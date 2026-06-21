@@ -7,16 +7,20 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  StatusBar,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../services/supabase";
 import CustomButton from "../components/CustomButton";
+import { useTheme } from "../context/ThemeContext";
 
 export default function DetailScreen() {
   const route = useRoute();
   const navigation = useNavigation<any>();
+  const { colors } = useTheme();
 
+  const styles = getStyles(colors);
   const { receta } = route.params as { receta: any };
 
   const confirmarBorrado = () => {
@@ -52,6 +56,8 @@ export default function DetailScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      <StatusBar barStyle={colors.statusBar} backgroundColor={colors.background} />
+      
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()}
@@ -66,11 +72,11 @@ export default function DetailScreen() {
 
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
-            <Ionicons name="time-outline" size={18} color="#64748B" />
+            <Ionicons name="time-outline" size={18} color={colors.textSecondary} />
             <Text style={styles.metaText}>{receta.tiempo || "30 min"}</Text>
           </View>
           <View style={styles.metaItem}>
-            <Ionicons name="flame-outline" size={18} color="#E11D48" />
+            <Ionicons name="flame-outline" size={18} color={colors.primary} />
             <Text style={styles.metaText}>{receta.dificultad || "Fácil"}</Text>
           </View>
           <View style={styles.metaItem}>
@@ -92,14 +98,14 @@ export default function DetailScreen() {
             title="Borrar"
             iconName="trash-outline"
             variant="tertiary"
-            style={{ backgroundColor: "#DC2626", flex: 1 }}
+            style={{ backgroundColor: colors.danger, flex: 1 }}
             onPress={confirmarBorrado}
           />
           <CustomButton
             title="Editar"
             iconName="create-outline"
             variant="primary"
-            style={{ backgroundColor: "#2563EB", flex: 1, marginLeft: 10 }}
+            style={{ backgroundColor: colors.secondary, flex: 1, marginLeft: 10 }}
             onPress={() => navigation.navigate("ManageRecipe", { receta })}
           />
         </View>
@@ -108,8 +114,8 @@ export default function DetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF" },
+const getStyles = (colors: any) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   image: { width: "100%", height: 250 },
   backButton: {
     position: "absolute",
@@ -121,7 +127,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   contentContainer: { padding: 20 },
-  title: { fontSize: 26, fontWeight: "bold", color: "#333", marginBottom: 10 },
+  title: { fontSize: 26, fontWeight: "bold", color: colors.text, marginBottom: 10 },
   metaRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -129,10 +135,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   metaItem: { flexDirection: "row", alignItems: "center", gap: 5 },
-  metaText: { fontSize: 14, color: "#64748B", fontWeight: "500" },
+  metaText: { fontSize: 14, color: colors.textSecondary, fontWeight: "500" },
   categoryBadge: {
-    backgroundColor: "#F1F5F9",
-    color: "#475569",
+    backgroundColor: colors.selectorBg,
+    color: colors.selectorText,
     paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 12,
@@ -142,14 +148,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#E11D48",
+    color: colors.primary,
     marginTop: 15,
     marginBottom: 5,
   },
-  bodyText: { fontSize: 16, color: "#4B5563", lineHeight: 24 },
+  bodyText: { fontSize: 16, color: colors.textSecondary, lineHeight: 24 },
   actionRow: {
     flexDirection: "row",
     marginTop: 40,
     justifyContent: "space-between",
   },
 });
+

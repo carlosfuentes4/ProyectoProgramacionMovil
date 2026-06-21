@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, ViewStyle, View } from "react-native"; 
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from '../context/ThemeContext';
 
 type ButtonProps = {
   title: string;
@@ -11,7 +12,8 @@ type ButtonProps = {
 };
 
 export default function CustomButton({ title, onPress, variant = "primary", style, iconName }: ButtonProps) {
-  const styles = getStyles(variant);
+  const { colors } = useTheme();
+  const styles = getStyles(variant, colors);
   
   return (
     <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
@@ -24,14 +26,14 @@ export default function CustomButton({ title, onPress, variant = "primary", styl
   );
 }
 
-const getStyles = (variant: "primary" | "secondary" | "tertiary") => StyleSheet.create({
+const getStyles = (variant: "primary" | "secondary" | "tertiary", colors: any) => StyleSheet.create({
   button: {
     borderRadius: 8,
     paddingVertical: 14,
     paddingHorizontal: 20,
-    backgroundColor: variant === "primary" ? "#87D68D" : 
-                     variant === "secondary" ? "#93B48B" : 
-                     "#8491A3",
+    backgroundColor: variant === "primary" ? colors.primary : 
+                     variant === "secondary" ? colors.secondary : 
+                     "#8491A3", // Fallback to default gray for tertiary
   },
   contentContainer: {
     flexDirection: 'row',
@@ -43,4 +45,4 @@ const getStyles = (variant: "primary" | "secondary" | "tertiary") => StyleSheet.
     fontWeight: 'bold',
     fontSize: 16,
   }
-});
+});
