@@ -5,6 +5,8 @@ import LoginScreen from '../screens/LoginScreen';
 import TabNavigator from './TabNavigator';
 import DetailScreen from '../screens/DetailScreen';
 import ManageRecipeScreen from '../screens/ManageRecipeScreen';
+import LoadingScreen from '../screens/LoadingScreen';
+
 
 export type RootStackParamList = {
   Login: undefined;
@@ -17,8 +19,9 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function StackNavigator() {
   const { user, loading } = useAuth();
+
   if (loading) {
-    return null;
+    return <LoadingScreen />;
   }
 
   return (
