@@ -3,7 +3,7 @@
     "name": "MiApp",
     "slug": "MiApp",
     "version": "1.0.0",
-    "scheme": "mycookingbook", 
+    "scheme": "mycookingbook",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,13 +17,19 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.carlosfuentes.MiApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-web-browser"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "42da4c84-152a-4d77-8d6a-37397e94f07e"
+      }
+    }
   }
 }
